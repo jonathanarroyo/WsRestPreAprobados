@@ -56,7 +56,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 			 String usuario) 
 	{
 		
-		String endpoint = "http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry";//consumoServiceREST.getParametro(pEndpointBUSInfoBasica);
+		String endpoint = "http://10.85.88.7:35090/customers/ProductCampPotentialSaleInquiry";//consumoServiceREST.getParametro(pEndpointBUSInfoBasica);
 		//endpoint = "http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry";
 		
 		System.out.println("Endpoint: " + endpoint);
