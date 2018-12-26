@@ -57,6 +57,9 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	{
 		
 		String endpoint = "http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry";//consumoServiceREST.getParametro(pEndpointBUSInfoBasica);
+		//endpoint = "http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry";
+		
+		System.out.println("Endpoint: " + endpoint);
 			
 		if(endpoint == null || "".equals(endpoint.trim()))
 			throw new RuntimeException("El endpoint no se encuentra parametrizado");

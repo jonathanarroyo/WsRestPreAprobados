@@ -25,7 +25,7 @@ import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceSOAP;
  * 
  */
 @RestController
-@RequestMapping("/preaprobados/v1")
+@RequestMapping("/preaprobados")
 public class PreAprobadosRestController {
 	
 	@Autowired
