@@ -51,9 +51,9 @@
 		<dependency>
 		    <groupId>com.bancodebogota</groupId>
 		    <artifactId>ProxyProductCampaignPotentialSaleInq</artifactId>
-		    <version>1.0</version>
+		    <version>1.0.0</version>
 		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/ProxyProductCampaignPotentialSaleInq-1.0.0.jar</systemPath>
+		    <systemPath>${project.basedir}\lib\ProxyProductCampaignPotentialSaleInq-1.0.0.jar</systemPath>
 		</dependency>
 		
 	</dependencies>
@@ -63,6 +63,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+			        <includeSystemScope>true</includeSystemScope>
+			    </configuration>
 			</plugin>
 		</plugins>
 	</build>
