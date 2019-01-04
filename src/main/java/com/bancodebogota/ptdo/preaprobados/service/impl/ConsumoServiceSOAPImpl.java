@@ -2,9 +2,12 @@ package com.bancodebogota.ptdo.preaprobados.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.bancodebogota.accounts.product.event.CampPotentialSaleInqRqType;
@@ -15,7 +18,11 @@ import com.bancodebogota.ifx.base.v1.AcctDomainListType;
 import com.bancodebogota.ifx.base.v1.CustIdType;
 import com.bancodebogota.ifx.base.v1.NetworkTrnInfoType;
 import com.bancodebogota.ptdo.preaprobados.configuration.SOAPConnector;
+import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceREST;
 import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceSOAP;
+
+import messaging.customers.entities.arrangement.CampPotentialSaleInqType;
+import messaging.customers.entities.product.ProductPotentialSaleType;
 
 /**
  * © Todos los derechos reservados Banco de Bogotá
@@ -32,12 +39,12 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	@Autowired
 	private SOAPConnector soapConnector;
 	
-	/*@Autowired
+	@Autowired
 	@Qualifier("ConsumoServiceREST")
 	private ConsumoServiceREST consumoServiceREST;
 	
-	@Value("${com.bancodebogota.ptdo.parametro.endpointBUSInfoBasica}")
-	private String pEndpointBUSInfoBasica;
+	@Value("${com.bancodebogota.ptdo.parametro.endpointBUSPreAprobados}")
+	private String pEndpointBUSPreAprobados;
 	
 	@Value("${com.bancodebogota.ptdo.parametro.canal}")
 	private String pCanal;
@@ -46,7 +53,25 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	private String pTerminalId;
 	
 	@Value("${com.bancodebogota.ptdo.parametro.bankId}")
-	private String pBankId;*/
+	private String pBankId;
+	
+	private HashMap<String, String> tipoProducto;
+	
+	private void poblarHasMap() {
+		tipoProducto = new HashMap<String, String>();
+		tipoProducto.put("ACC","ACCIONES");
+		tipoProducto.put("AFC","CUENTAS AFC");
+		tipoProducto.put("CAH","CTA AHORROS");
+		tipoProducto.put("CAR_ME","CARTERA MONEDA EXTRANJERA");
+		tipoProducto.put("CAR_ML","CARTERA MONEDA LEGAL");
+		tipoProducto.put("CARDIF","SEGURO CARDIF");
+		tipoProducto.put("CCT","CTA CORRIENTE");
+		//tipoProducto.put("CDT","CDT`S");
+		tipoProducto.put("FID","FIDUCIARIA");
+		tipoProducto.put("SEG","SEGURO");
+		tipoProducto.put("TCR","TARJETA CREDITO");
+		tipoProducto.put("TDB","TARJETA DEBITO");
+	}
 
 	/* (non-Javadoc)
 	 * @see com.bancodebogota.grupo.app.service.ConsumoWSService#custBasicInfoRequest(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
@@ -56,16 +81,17 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 			 String usuario) 
 	{
 		
-		String endpoint = "http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry";//consumoServiceREST.getParametro(pEndpointBUSInfoBasica);
-		//endpoint = "http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry";
-		
-		System.out.println("Endpoint: " + endpoint);
+		String endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
+		// http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry externo desarrollo
+		// http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry interno desarrollo
 			
 		if(endpoint == null || "".equals(endpoint.trim()))
 			throw new RuntimeException("El endpoint no se encuentra parametrizado");
 		
-		String canal = "PTDO";//consumoServiceREST.getParametro(pCanal);
-		String bankId = "001";//consumoServiceREST.getParametro(pBankId);
+		String canal = consumoServiceREST.getParametro(pCanal);
+		String bankId = consumoServiceREST.getParametro(pBankId);
+
+		this.poblarHasMap();
 		
 		CustIdType custId = new CustIdType();
 		custId.setCustType(tipoDocumento);
@@ -93,7 +119,16 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		GetCampPotentialSaleRequest request = new GetCampPotentialSaleRequest();
 		request.setCampPotentialSaleInqRq(campPotentialSale);
 				
-		return  (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
+		GetCampPotentialSaleResponse response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
+		
+		for(CampPotentialSaleInqType potential : response.getCampPotentialSaleInqRs().getCampPotentialSaleInq()) {
+			for(ProductPotentialSaleType product : potential.getProductPotentialSale()) {
+				if(tipoProducto.containsKey(product.getAcctDomain()))
+					product.setAcctDomain(tipoProducto.get(product.getAcctDomain()));
+			}
+		}
+		
+		return response;
 		
 	}
 	

@@ -1,0 +1,13 @@
+com:
+  bancodebogota:
+    ptdo:
+      rest:
+        endpoint:
+          wsparametro: http://172.30.190.48:8084/parametro/%s
+      parametro:
+        endpointBUSPreAprobados: endpointProductCampPotentialSaleInquiry
+        canal: canal
+        terminalId: terminalId
+        bankId: bankId
+server:
+  port: 8086
