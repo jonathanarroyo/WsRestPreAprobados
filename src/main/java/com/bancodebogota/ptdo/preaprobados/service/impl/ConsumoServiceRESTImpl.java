@@ -44,13 +44,18 @@ public class ConsumoServiceRESTImpl implements ConsumoServiceREST {
 
 		urlWSRestDevices = String.format(wsparametro, nombre);
 
+		System.out.println("Inicio consumo parametria: " + urlWSRestDevices);
+		
 		response = ClientBuilder.newBuilder()
 				.register(JacksonJsonProvider.class)
 				.build()
 				.target(urlWSRestDevices)
 				.request(MediaType.APPLICATION_JSON)
 				.get();
-
+		
+		System.out.println("Realizo el consumo parametria");
+		System.out.println(response.getStatus());
+		
 		if (response.getStatus() != 200) {
 			throw new RuntimeException(
 					String.format("Failed : HTTP error code %s - %s", response.getStatus(), response.getStatusInfo()));
@@ -62,10 +67,12 @@ public class ConsumoServiceRESTImpl implements ConsumoServiceREST {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
 			parametro = mapper.readValue(strResponse, Parametro.class);
+			System.out.println(parametro);
 			return parametro.getValor();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Fin consumo parametria");
 		return parametro.getValor();
 	}
 }

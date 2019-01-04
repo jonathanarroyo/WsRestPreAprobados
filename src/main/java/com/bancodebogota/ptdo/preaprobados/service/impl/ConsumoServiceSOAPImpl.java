@@ -88,6 +88,8 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		if(endpoint == null || "".equals(endpoint.trim()))
 			throw new RuntimeException("El endpoint no se encuentra parametrizado");
 		
+		System.out.println(endpoint);
+		
 		String canal = consumoServiceREST.getParametro(pCanal);
 		String bankId = consumoServiceREST.getParametro(pBankId);
 
