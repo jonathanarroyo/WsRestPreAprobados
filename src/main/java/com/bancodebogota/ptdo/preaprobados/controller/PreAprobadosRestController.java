@@ -43,6 +43,7 @@ public class PreAprobadosRestController {
 	@CrossOrigin
 	@GetMapping("/cliente/{tipoDocumento}/{numeroDocumento}")
 	public ResponseEntity<Respuesta> getDatosCliente(@RequestHeader(value ="usuarioBBta", defaultValue ="usuario", required = false) String usuario,
+			@RequestHeader(value ="endpoint") String endpoint,
 			@PathVariable("tipoDocumento") String tipoDocumento,
 			@PathVariable("numeroDocumento") String numeroDocumento) {
 
@@ -64,7 +65,7 @@ public class PreAprobadosRestController {
 			
 			respuesta.setEstado(0);
 			respuesta.setDescripcion("Transacción exitosa");
-			respuesta.setGetCampPotentialSaleResponse(consumoServiceSOAP.getCampPotentialSale(tipoDocumento, numeroDocumento, usuario));
+			respuesta.setGetCampPotentialSaleResponse(consumoServiceSOAP.getCampPotentialSale(tipoDocumento, numeroDocumento, usuario, endpoint));
 
 			return new ResponseEntity<Respuesta>(respuesta, HttpStatus.OK);
 

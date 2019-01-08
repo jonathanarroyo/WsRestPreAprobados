@@ -21,6 +21,6 @@ public interface ConsumoServiceSOAP {
 	 * @param usuario
 	 * @return
 	 */
-	GetCampPotentialSaleResponse getCampPotentialSale(String tipoDocumento, String numeroDocumento, String usuario);
+	GetCampPotentialSaleResponse getCampPotentialSale(String tipoDocumento, String numeroDocumento, String usuario, String endpoint);
 
 }

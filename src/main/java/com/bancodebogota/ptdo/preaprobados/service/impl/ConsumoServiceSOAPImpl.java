@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.bancodebogota.accounts.product.event.CampPotentialSaleInqRqType;
@@ -18,7 +16,6 @@ import com.bancodebogota.ifx.base.v1.AcctDomainListType;
 import com.bancodebogota.ifx.base.v1.CustIdType;
 import com.bancodebogota.ifx.base.v1.NetworkTrnInfoType;
 import com.bancodebogota.ptdo.preaprobados.configuration.SOAPConnector;
-import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceREST;
 import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceSOAP;
 
 import messaging.customers.entities.arrangement.CampPotentialSaleInqType;
@@ -39,7 +36,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	@Autowired
 	private SOAPConnector soapConnector;
 	
-	@Autowired
+	/*@Autowired
 	@Qualifier("ConsumoServiceREST")
 	private ConsumoServiceREST consumoServiceREST;
 	
@@ -53,7 +50,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	private String pTerminalId;
 	
 	@Value("${com.bancodebogota.ptdo.parametro.bankId}")
-	private String pBankId;
+	private String pBankId;*/
 	
 	private HashMap<String, String> tipoProducto;
 	
@@ -78,20 +75,21 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	 */
 	public GetCampPotentialSaleResponse getCampPotentialSale(String tipoDocumento,
 			 String numeroDocumento,
-			 String usuario) 
+			 String usuario,
+			 String endpoint) 
 	{
 		
-		String endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
-		// http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry externo desarrollo
-		// http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry interno desarrollo
+		//String endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
+		//String endpoint =  "http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry";// externo desarrollo
+		//String endpoint =  "http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry";// interno desarrollo
 			
 		if(endpoint == null || "".equals(endpoint.trim()))
 			throw new RuntimeException("El endpoint no se encuentra parametrizado");
 		
 		System.out.println(endpoint);
 		
-		String canal = consumoServiceREST.getParametro(pCanal);
-		String bankId = consumoServiceREST.getParametro(pBankId);
+		String canal = "PTDO";//consumoServiceREST.getParametro(pCanal);
+		String bankId = "001";//consumoServiceREST.getParametro(pBankId);
 
 		this.poblarHasMap();
 		
