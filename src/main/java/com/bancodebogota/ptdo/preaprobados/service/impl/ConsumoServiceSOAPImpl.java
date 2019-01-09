@@ -1,13 +1,10 @@
 package com.bancodebogota.ptdo.preaprobados.service.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
-
-import javax.xml.bind.JAXBException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -139,18 +136,21 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		GetCampPotentialSaleRequest request = new GetCampPotentialSaleRequest();
 		request.setCampPotentialSaleInqRq(campPotentialSale);
 				
-		GetCampPotentialSaleResponse response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
+		GetCampPotentialSaleResponse response = new GetCampPotentialSaleResponse();
 		
 		try {
+			
 			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(request));
+			
+			response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
+			
 			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(response));
-		} catch (UnsupportedEncodingException e) {
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
+				
 		
 		for(CampPotentialSaleInqType potential : response.getCampPotentialSaleInqRs().getCampPotentialSaleInq()) {
 			for(ProductPotentialSaleType product : potential.getProductPotentialSale()) {
