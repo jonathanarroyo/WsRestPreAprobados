@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.xml.ws.soap.SOAPFaultException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -146,9 +148,42 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 			
 			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(response));
 			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception excepcion) {
+	        String statusCode = null;
+	        String statusDesc = null;
+	        String faultCode = null;
+	        String faultString = null;
+	        Object faultObject = null;
+            if (excepcion instanceof SOAPFaultException)
+            {
+                SOAPFaultException spe = (SOAPFaultException) excepcion;
+                faultCode = spe.getFault().getFaultCode();
+                faultString = spe.getFault().getFaultString();
+                try
+                {
+                    statusCode = objectUtils.obtenerValorPorExpresion(spe.getFault(), "//*/*[local-name()='GeneralException']/*[local-name()='Status']/*[local-name()='StatusCode']");
+                    if (statusCode.length() == 0 || statusDesc.length() == 0)
+                    {
+                        throw spe;
+                    }
+                    faultObject = objectUtils.obtenerValorPorExpresion(spe.getFault(), "//*/*[local-name()='GeneralException']");
+                }
+                catch (Exception egppe)
+                {
+                    statusCode = spe.getFault().getFaultCode();
+                    statusDesc = spe.getFault().getFaultString();
+                    faultObject = spe.getFault();
+                }
+            }
+            else
+            {
+                faultCode = excepcion.getClass().getName();
+                faultString = excepcion.getMessage();
+                faultObject = excepcion.getStackTrace();
+                statusCode = "VSC001";
+                statusDesc = faultString;
+            }
+            log.warning(objectUtils.obtenerValoresDesdeObjeto(faultObject))
 		}
 				
 		
