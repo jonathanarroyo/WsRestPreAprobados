@@ -148,7 +148,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 			System.out.println(xmlResponse);
 			
 		} catch(Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 		return response;
