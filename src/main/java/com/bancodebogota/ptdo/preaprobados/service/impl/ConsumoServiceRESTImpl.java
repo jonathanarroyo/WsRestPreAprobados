@@ -43,8 +43,6 @@ public class ConsumoServiceRESTImpl implements ConsumoServiceREST {
 		String urlWSRestDevices = null;
 
 		urlWSRestDevices = String.format(wsparametro, nombre);
-
-		System.out.println("Inicio consumo parametria: " + urlWSRestDevices);
 		
 		response = ClientBuilder.newBuilder()
 				.register(JacksonJsonProvider.class)
@@ -52,9 +50,6 @@ public class ConsumoServiceRESTImpl implements ConsumoServiceREST {
 				.target(urlWSRestDevices)
 				.request(MediaType.APPLICATION_JSON)
 				.get();
-		
-		System.out.println("Realizo el consumo parametria");
-		System.out.println(response.getStatus());
 		
 		if (response.getStatus() != 200) {
 			throw new RuntimeException(
@@ -67,12 +62,10 @@ public class ConsumoServiceRESTImpl implements ConsumoServiceREST {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
 			parametro = mapper.readValue(strResponse, Parametro.class);
-			System.out.println(parametro);
 			return parametro.getValor();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
-		System.out.println("Fin consumo parametria");
 		return parametro.getValor();
 	}
 }

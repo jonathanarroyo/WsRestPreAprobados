@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.bancodebogota.accounts.product.event.CampPotentialSaleInqRqType;
@@ -15,7 +17,9 @@ import com.bancodebogota.customers.arrangement.v1.CampaignRuleType;
 import com.bancodebogota.ifx.base.v1.AcctDomainListType;
 import com.bancodebogota.ifx.base.v1.CustIdType;
 import com.bancodebogota.ifx.base.v1.NetworkTrnInfoType;
+import com.bancodebogota.ptdo.preaprobados.component.ObjectUtils;
 import com.bancodebogota.ptdo.preaprobados.configuration.SOAPConnector;
+import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceREST;
 import com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceSOAP;
 
 import messaging.customers.entities.arrangement.CampPotentialSaleInqType;
@@ -36,9 +40,13 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	@Autowired
 	private SOAPConnector soapConnector;
 	
-	/*@Autowired
+	@Autowired
 	@Qualifier("ConsumoServiceREST")
 	private ConsumoServiceREST consumoServiceREST;
+	
+	@Autowired
+	@Qualifier("objectUtils")
+	private ObjectUtils objectUtils;
 	
 	@Value("${com.bancodebogota.ptdo.parametro.endpointBUSPreAprobados}")
 	private String pEndpointBUSPreAprobados;
@@ -50,7 +58,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	private String pTerminalId;
 	
 	@Value("${com.bancodebogota.ptdo.parametro.bankId}")
-	private String pBankId;*/
+	private String pBankId;
 	
 	private HashMap<String, String> tipoProducto;
 	
@@ -63,7 +71,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		tipoProducto.put("CAR_ML","CARTERA MONEDA LEGAL");
 		tipoProducto.put("CARDIF","SEGURO CARDIF");
 		tipoProducto.put("CCT","CTA CORRIENTE");
-		//tipoProducto.put("CDT","CDT`S");
+		tipoProducto.put("CDT","CDT`S");
 		tipoProducto.put("FID","FIDUCIARIA");
 		tipoProducto.put("SEG","SEGURO");
 		tipoProducto.put("TCR","TARJETA CREDITO");
@@ -79,7 +87,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 			 String endpoint) 
 	{
 		
-		//String endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
+		//endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
 		//String endpoint =  "http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry";// externo desarrollo
 		//String endpoint =  "http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry";// interno desarrollo
 			
@@ -88,9 +96,12 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		
 		System.out.println(endpoint);
 		
-		String canal = "PTDO";//consumoServiceREST.getParametro(pCanal);
-		String bankId = "001";//consumoServiceREST.getParametro(pBankId);
+		//String canal = consumoServiceREST.getParametro(pCanal);
+		//String bankId = consumoServiceREST.getParametro(pBankId);
 
+		String canal = "PTDO";
+		String bankId = "001";
+		
 		this.poblarHasMap();
 		
 		CustIdType custId = new CustIdType();
@@ -117,7 +128,7 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		campPotentialSale.setCampaignRule(campaignRule);
 
 		GetCampPotentialSaleRequest request = new GetCampPotentialSaleRequest();
-		request.setCampPotentialSaleInqRq(campPotentialSale);
+		request.setCampPotentialSaleInqRq(campPotentialSale);		
 				
 		GetCampPotentialSaleResponse response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
 		
@@ -126,6 +137,18 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 				if(tipoProducto.containsKey(product.getAcctDomain()))
 					product.setAcctDomain(tipoProducto.get(product.getAcctDomain()));
 			}
+		}
+		
+		try {
+			
+			String xmlRequest = objectUtils.obtenerTramaSoapDesdeObjeto(request);
+			System.out.println(xmlRequest);
+			
+			String xmlResponse = objectUtils.obtenerTramaSoapDesdeObjeto(response);
+			System.out.println(xmlResponse);
+			
+		} catch(Exception e) {
+			
 		}
 		
 		return response;

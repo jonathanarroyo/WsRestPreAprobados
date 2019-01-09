@@ -43,7 +43,7 @@ public class PreAprobadosRestController {
 	@CrossOrigin
 	@GetMapping("/cliente/{tipoDocumento}/{numeroDocumento}")
 	public ResponseEntity<Respuesta> getDatosCliente(@RequestHeader(value ="usuarioBBta", defaultValue ="usuario", required = false) String usuario,
-			@RequestHeader(value ="endpoint") String endpoint,
+			@RequestHeader(value ="endpoint", defaultValue ="", required = false) String endpoint,
 			@PathVariable("tipoDocumento") String tipoDocumento,
 			@PathVariable("numeroDocumento") String numeroDocumento) {
 
