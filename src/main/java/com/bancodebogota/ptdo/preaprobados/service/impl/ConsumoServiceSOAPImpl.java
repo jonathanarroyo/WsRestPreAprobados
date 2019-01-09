@@ -1,9 +1,13 @@
 package com.bancodebogota.ptdo.preaprobados.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import javax.xml.bind.JAXBException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +41,8 @@ import messaging.customers.entities.product.ProductPotentialSaleType;
 @Service("consumoServiceSOAP")
 public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 	
+	private final static Logger log = Logger.getLogger(ConsumoServiceSOAPImpl.class.getName());
+		
 	@Autowired
 	private SOAPConnector soapConnector;
 	
@@ -78,26 +84,27 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		tipoProducto.put("TDB","TARJETA DEBITO");
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see com.bancodebogota.grupo.app.service.ConsumoWSService#custBasicInfoRequest(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see com.bancodebogota.ptdo.preaprobados.service.ConsumoServiceSOAP#getCampPotentialSale(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public GetCampPotentialSaleResponse getCampPotentialSale(String tipoDocumento,
 			 String numeroDocumento,
 			 String usuario,
 			 String endpoint) 
 	{
-		
-		//endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
+		if("".equals(endpoint))
+			endpoint = consumoServiceREST.getParametro(pEndpointBUSPreAprobados);
 		//String endpoint =  "http://10.85.88.126:15090/customers/ProductCampPotentialSaleInquiry";// externo desarrollo
 		//String endpoint =  "http://10.87.52.23:10088/customers/ProductCampPotentialSaleInquiry";// interno desarrollo
 			
 		if(endpoint == null || "".equals(endpoint.trim()))
 			throw new RuntimeException("El endpoint no se encuentra parametrizado");
 		
-		System.out.println(endpoint);
-		
 		//String canal = consumoServiceREST.getParametro(pCanal);
 		//String bankId = consumoServiceREST.getParametro(pBankId);
+		
+		log.warning(endpoint);
 
 		String canal = "PTDO";
 		String bankId = "001";
@@ -126,29 +133,30 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		campPotentialSale.setNetworkTrnInfo(network);
 		campPotentialSale.setClientDt(clientDt);
 		campPotentialSale.setCampaignRule(campaignRule);
+		
+		log.warning(campPotentialSale.getCustId().getCustPermId());
 
 		GetCampPotentialSaleRequest request = new GetCampPotentialSaleRequest();
-		request.setCampPotentialSaleInqRq(campPotentialSale);		
+		request.setCampPotentialSaleInqRq(campPotentialSale);
 				
 		GetCampPotentialSaleResponse response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
 		
-		/*for(CampPotentialSaleInqType potential : response.getCampPotentialSaleInqRs().getCampPotentialSaleInq()) {
+		try {
+			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(request));
+			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(response));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		
+		for(CampPotentialSaleInqType potential : response.getCampPotentialSaleInqRs().getCampPotentialSaleInq()) {
 			for(ProductPotentialSaleType product : potential.getProductPotentialSale()) {
 				if(tipoProducto.containsKey(product.getAcctDomain()))
 					product.setAcctDomain(tipoProducto.get(product.getAcctDomain()));
 			}
-		}*/
-		
-		try {
-			
-			String xmlRequest = objectUtils.obtenerTramaSoapDesdeObjeto(request);
-			System.out.println(xmlRequest);
-			
-			String xmlResponse = objectUtils.obtenerTramaSoapDesdeObjeto(response);
-			System.out.println(xmlResponse);
-			
-		} catch(Exception e) {
-			e.printStackTrace();
 		}
 		
 		return response;
