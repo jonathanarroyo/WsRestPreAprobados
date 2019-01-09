@@ -132,12 +132,12 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 				
 		GetCampPotentialSaleResponse response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
 		
-		for(CampPotentialSaleInqType potential : response.getCampPotentialSaleInqRs().getCampPotentialSaleInq()) {
+		/*for(CampPotentialSaleInqType potential : response.getCampPotentialSaleInqRs().getCampPotentialSaleInq()) {
 			for(ProductPotentialSaleType product : potential.getProductPotentialSale()) {
 				if(tipoProducto.containsKey(product.getAcctDomain()))
 					product.setAcctDomain(tipoProducto.get(product.getAcctDomain()));
 			}
-		}
+		}*/
 		
 		try {
 			
