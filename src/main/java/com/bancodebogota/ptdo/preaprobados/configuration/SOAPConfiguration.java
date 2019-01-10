@@ -22,26 +22,7 @@ public class SOAPConfiguration {
 	@Bean
 	public Jaxb2Marshaller marshaller() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-		// this is the package name specified in the <generatePackage> specified in
-		// pom.xml
-
-		//marshaller.setContextPath("com.bancodebogota.accounts.product.service");
-		
-		/*String[] contextPaths = {
-				"com.bancodebogota.accounts.product.event",
-				"com.bancodebogota.accounts.product.service",
-				"com.bancodebogota.creditcard.product.v1",
-				"com.bancodebogota.customers.arrangement.v1",
-				"com.bancodebogota.customers.condition.v1",
-				"com.bancodebogota.customers.involvedparty.v1",
-				"com.bancodebogota.ifx.base.v1",
-				"com.bancodebogota.security.involvedparty.v1",
-				"messaging.customers.entities.arrangement",
-				"messaging.customers.entities.product"
-				};
-		
-		marshaller.setContextPaths(contextPaths);*/
-		marshaller.setContextPath("com.bancodebogota.accounts.product.service");
+		marshaller.setPackagesToScan("com.bancodebogota");
 		return marshaller;
 	}
 
