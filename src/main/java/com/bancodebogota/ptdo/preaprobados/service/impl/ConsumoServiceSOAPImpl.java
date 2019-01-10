@@ -139,16 +139,18 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
 		request.setCampPotentialSaleInqRq(campPotentialSale);
 				
 		GetCampPotentialSaleResponse response = new GetCampPotentialSaleResponse();
+		Object data = new Object(); 
 		
 		try {
 			
-			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(request));
+			//log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(request));
 			
-			response = (GetCampPotentialSaleResponse) soapConnector.callWebService(endpoint, request);
+			data = soapConnector.callWebService(endpoint, request);
 			
-			log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(response));
+			//log.warning(objectUtils.obtenerTramaSoapDesdeObjeto(response));
 			
 		} catch (Exception excepcion) {
+			excepcion.printStackTrace();
 	        String statusCode = null;
 	        String statusDesc = null;
 	        String faultCode = null;
@@ -183,9 +185,9 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
                 statusCode = "VSC001";
                 statusDesc = faultString;
             }
-            log.warning(statusCode);
+            /*log.warning(statusCode);
             log.warning(statusDesc);
-            log.warning(objectUtils.obtenerValoresDesdeObjeto(faultObject));
+            log.warning(objectUtils.obtenerValoresDesdeObjeto(faultObject));*/
 		}
 				
 		
