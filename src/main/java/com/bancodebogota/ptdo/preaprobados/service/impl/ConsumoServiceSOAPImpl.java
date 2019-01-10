@@ -183,6 +183,8 @@ public class ConsumoServiceSOAPImpl implements ConsumoServiceSOAP {
                 statusCode = "VSC001";
                 statusDesc = faultString;
             }
+            log.warning(statusCode);
+            log.warning(statusDesc);
             log.warning(objectUtils.obtenerValoresDesdeObjeto(faultObject));
 		}
 				
